@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.GithubRepositoryMapper">
+
+    <resultMap id="GithubRepositoryResultMap" type="com.example.entity.GithubRepository">
+        <id property="id" column="id"/>
+        <result property="owner" column="owner"/>
+        <result property="repositoryName" column="repository_name"/>
+        <result property="fullName" column="full_name"/>
+        <result property="description" column="description"/>
+        <result property="cloneUrl" column="clone_url"/>
+        <result property="stars" column="stars"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="lastUpdated" column="last_updated"/>
+    </resultMap>
+
+    <select id="findByOwnerAndRepositoryName" resultMap="GithubRepositoryResultMap">
+        SELECT id, owner, repository_name, full_name, description, clone_url, stars, created_at, last_updated
+        FROM github_repositories
+        WHERE owner = #{owner} AND repository_name = #{repositoryName}
+    </select>
+
+    <insert id="insert" parameterType="com.example.entity.GithubRepository" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO github_repositories (owner, repository_name, full_name, description, clone_url, stars, created_at, last_updated)
+        VALUES (#{owner}, #{repositoryName}, #{fullName}, #{description}, #{cloneUrl}, #{stars}, #{createdAt}, #{lastUpdated})
+    </insert>
+
+</mapper>
