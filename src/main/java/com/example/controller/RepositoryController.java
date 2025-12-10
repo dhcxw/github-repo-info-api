@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * GitHub仓库信息Restful API控制器
+ * GitHub Repository RESTful API Controller
  */
 @RestController
 @RequestMapping("/repositories")
@@ -20,11 +20,11 @@ public class RepositoryController {
 
     private static final Logger logger = LoggerFactory.getLogger(RepositoryController.class);
 
-    /** 仓库服务层，处理具体的业务逻辑 */
+    /** Repository service layer, handles business logic */
     private final RepositoryService repositoryService;
 
     /**
-     * 构造器注入依赖
+     * Constructor injection
      */
     @Autowired
     public RepositoryController(RepositoryService repositoryService) {
@@ -32,10 +32,10 @@ public class RepositoryController {
     }
 
     /**
-     * 获取指定GitHub仓库的详细信息
-     * @param owner 仓库所有者
-     * @param repositoryName 仓库名称
-     * @return 仓库详细信息响应
+     * Get detailed information of specified GitHub repository
+     * @param owner Repository owner
+     * @param repositoryName Repository name
+     * @return Repository details response
      */
     @GetMapping("/{owner}/{repository-name}")
     public ResponseEntity<RepositoryResponse> getRepository(
@@ -43,7 +43,7 @@ public class RepositoryController {
             @PathVariable("repository-name") String repositoryName) {
         
         logger.info("Received request for repository: {}/{}", owner, repositoryName);
-        // 调用服务层获取仓库信息
+        // Call service layer to get repository information
         RepositoryResponse response = repositoryService.getRepository(owner, repositoryName);
         return ResponseEntity.ok(response);
     }

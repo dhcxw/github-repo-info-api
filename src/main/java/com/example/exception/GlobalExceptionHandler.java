@@ -12,7 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 全局异常处理器
+ * Global Exception Handler
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -20,16 +20,16 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
-     * 处理仓库不存在异常
+     * Handle repository not found exception
      * 
-     * @param ex 仓库不存在异常
-     * @return HTTP 404响应
+     * @param ex Repository not found exception
+     * @return HTTP 404 response
      */
     @ExceptionHandler(RepositoryNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleRepositoryNotFound(RepositoryNotFoundException ex) {
         logger.error("Repository not found: {}", ex.getMessage());
         
-        // 构建统一格式的错误响应体
+        // Build unified error response body
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());
         body.put("status", HttpStatus.NOT_FOUND.value());
@@ -40,10 +40,10 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理GitHub API调用异常
+     * Handle GitHub API call exception
      * 
-     * @param ex GitHub API异常
-     * @return HTTP 502响应
+     * @param ex GitHub API exception
+     * @return HTTP 502 response
      */
     @ExceptionHandler(GithubApiException.class)
     public ResponseEntity<Map<String, Object>> handleGithubApiException(GithubApiException ex) {
@@ -59,10 +59,10 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理通用异常
+     * Handle generic exception
      * 
-     * @param ex 任意异常
-     * @return HTTP 500响应
+     * @param ex Any exception
+     * @return HTTP 500 response
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
