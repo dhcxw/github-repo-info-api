@@ -12,14 +12,14 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * GitHub API客户端服务
- * 与GitHub REST API通信，获取仓库信息
+ * GitHub API Client Service
+ * Communicates with GitHub REST API to fetch repository information
  */
 @Service
 public class GithubApiClient {
 
     private static final Logger logger = LoggerFactory.getLogger(GithubApiClient.class);
-    /** GitHub API的RESTful接口地址 */
+    /** GitHub API RESTful endpoint address */
     private static final String GITHUB_API_URL = "https://api.github.com/repos/{owner}/{repo}";
 
     private final RestTemplate restTemplate;
@@ -29,13 +29,13 @@ public class GithubApiClient {
     }
 
     /**
-     * 从GitHub API获取仓库信息
+     * Fetch repository information from GitHub API
      * 
-     * @param owner 仓库所有者
-     * @param repositoryName 仓库名称
-     * @return GitHub API返回的仓库信息
-     * @throws RepositoryNotFoundException 仓库不存在时404
-     * @throws GithubApiException 调用失败时抛出
+     * @param owner Repository owner
+     * @param repositoryName Repository name
+     * @return Repository information returned by GitHub API
+     * @throws RepositoryNotFoundException Thrown when repository not found (404)
+     * @throws GithubApiException Thrown when API call fails
      */
     public GithubApiResponse fetchRepository(String owner, String repositoryName) {
         logger.info("Fetching repository from GitHub API: {}/{}", owner, repositoryName);
@@ -48,7 +48,7 @@ public class GithubApiClient {
                 repositoryName
             );
 
-            // 检查响应状态码和响应体
+            // Check response status code and body
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 logger.info("Successfully fetched repository from GitHub: {}/{}", owner, repositoryName);
                 return response.getBody();
@@ -66,7 +66,7 @@ public class GithubApiClient {
             logger.error("GitHub API client error: {}", e.getMessage());
             throw new GithubApiException("Error calling GitHub API: " + e.getMessage(), e);
         } catch (Exception e) {
-            // 5xx服务器错误或其他异常
+            // 5xx server errors or other exceptions
             logger.error("Unexpected error calling GitHub API: {}", e.getMessage());
             throw new GithubApiException("Unexpected error calling GitHub API", e);
         }

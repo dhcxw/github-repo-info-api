@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * GitHub仓库信息服务类
- * 负责处理仓库信息的查询、缓存和数据转换逻辑
+ * GitHub Repository Service
+ * Handles repository information querying, caching, and data transformation
  */
 @Service
 public class RepositoryService {
@@ -24,7 +24,7 @@ public class RepositoryService {
     private static final DateTimeFormatter ISO_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 
     private final GithubRepositoryMapper repositoryMapper;
-    /** GitHub API客户端*/
+    /** GitHub API client */
     private final GithubApiClient githubApiClient;
 
     @Autowired
@@ -34,28 +34,28 @@ public class RepositoryService {
     }
 
     /**
-     * 获取GitHub仓库信息
-     * @param owner 仓库所有者
-     * @param repositoryName 仓库名称
-     * @return 仓库详细信息的响应对象
+     * Get GitHub repository information
+     * @param owner Repository owner
+     * @param repositoryName Repository name
+     * @return Response object with repository details
      */
     public RepositoryResponse getRepository(String owner, String repositoryName) {
         logger.info("Getting repository: {}/{}", owner, repositoryName);
 
-        //优先从数据库缓存中查询
+        // Query database cache first
         GithubRepository cachedRepo = repositoryMapper.findByOwnerAndRepositoryName(owner, repositoryName);
 
         if (cachedRepo != null) {
-            // 缓存命中，直接返回
+            // Cache hit, return directly
             logger.info("Repository found in cache: {}/{}", owner, repositoryName);
             return mapToResponse(cachedRepo);
         }
 
-        //缓存未命中，从GitHub获取最新数据
+        // Cache miss, fetch latest data from GitHub
         logger.info("Repository not in cache, fetching from GitHub API: {}/{}", owner, repositoryName);
         GithubApiResponse apiResponse = githubApiClient.fetchRepository(owner, repositoryName);
 
-        //转换为实体对象并保存到数据库
+        // Convert to entity and save to database
         GithubRepository entity = mapToEntity(owner, repositoryName, apiResponse);
         repositoryMapper.insert(entity);
         logger.info("Repository saved to cache: {}/{}", owner, repositoryName);
@@ -64,12 +64,12 @@ public class RepositoryService {
     }
 
     /**
-     * 将GitHub API响应转换为数据库实体对象
+     * Convert GitHub API response to database entity
      * 
-     * @param owner 仓库所有者
-     * @param repositoryName 仓库名称
-     * @param apiResponse GitHub API的响应数据
-     * @return 数据库实体对象
+     * @param owner Repository owner
+     * @param repositoryName Repository name
+     * @param apiResponse GitHub API response data
+     * @return Database entity object
      */
     private GithubRepository mapToEntity(String owner, String repositoryName, GithubApiResponse apiResponse) {
         LocalDateTime createdAt = LocalDateTime.parse(apiResponse.getCreatedAt(), ISO_FORMATTER);
@@ -82,15 +82,15 @@ public class RepositoryService {
                 .cloneUrl(apiResponse.getCloneUrl())
                 .stars(apiResponse.getStargazersCount())
                 .createdAt(createdAt)
-                .lastUpdated(LocalDateTime.now())  // 记录缓存更新时间
+                .lastUpdated(LocalDateTime.now())  // Record cache update time
                 .build();
     }
 
     /**
-     * 将数据库实体对象转换为API响应对象
+     * Convert database entity to API response object
      * 
-     * @param entity 数据库实体对象
-     * @return 符合规范的响应对象
+     * @param entity Database entity object
+     * @return Response object conforming to specifications
      */
     private RepositoryResponse mapToResponse(GithubRepository entity) {
         return RepositoryResponse.builder()
